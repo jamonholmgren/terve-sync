@@ -1,0 +1,30 @@
+{
+  "name": "terve",
+  "version": "0.0.1",
+  "description": "Terve allows for seamless synchronization between MobX-State-Tree stores (and more) with a Terve Elixir/Phoenix server.",
+  "main": "./dist/terve.js",
+  "repository": "https://github.com/jamonholmgren/terve",
+  "author": "Jamon Holmgren",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "mobx": "^6",
+    "mobx-state-tree": "^5",
+    "phoenix": "^1"
+  },
+  "prettier": {
+    "semi": false,
+    "printWidth": 100
+  },
+  "files": [
+    "./dist",
+    "package.json",
+    "README.md"
+  ]
+}
