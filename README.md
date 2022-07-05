@@ -21,3 +21,15 @@ Are you:
 1. Sign up for a Terve Server account (coming soon)
 2. Get an API key (coming soon)
 3. Add the library to your client (`yarn add terve`)
+4. Add this to any MST store you want to synchronize:
+
+```ts
+const SynchronizedStore = types.model("SynchronizedStore", { ... })
+  .views(...)
+  .actions(...)
+  .extend(
+    withTerveSync({
+      apiKey: "some-api-key"
+    }),
+  )
+```

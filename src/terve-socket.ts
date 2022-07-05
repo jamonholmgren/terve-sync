@@ -16,7 +16,7 @@ export function join(room: string, callbacks: TerveCallbacks = {}) {
   if (!socket) throw new Error("socket not connected -- run `connect(socketURL)` first")
 
   // Now that you are connected, you can join channels with a topic:
-  let channel = socket.channel(`room:${room}`, {})
+  let channel = socket.channel(`tervesync:${room}`, {})
 
   channel
     .join()
