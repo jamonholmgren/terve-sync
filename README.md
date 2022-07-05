@@ -1,10 +1,10 @@
-# Terve
+# Terve Sync
 
 _Terve means "hello" in Finnish._
 
 This is an experimental library by Jamon Holmgren which allows for
 synchronization of MobX-State-Tree stores (and possibly others in the
-future) via an Elixir/Phoenix server I'm calling "Terve".
+future) via an Elixir/Phoenix server I'm calling "Terve Server".
 
 ## Do you need this?
 
@@ -20,7 +20,7 @@ Are you:
 
 1. Sign up for a Terve Server account (coming soon)
 2. Get an API key (coming soon)
-3. Add the library to your client (`yarn add terve`)
+3. Add the library to your client (`yarn add terve-sync`)
 4. Add this to any MST store you want to synchronize:
 
 ```ts

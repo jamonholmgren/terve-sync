@@ -1,6 +1,6 @@
 {
-  "name": "terve",
-  "version": "0.0.1",
+  "name": "terve-sync",
+  "version": "0.0.2",
   "description": "Terve allows for seamless synchronization between MobX-State-Tree stores (and more) with a Terve Elixir/Phoenix server.",
   "main": "./dist/terve.js",
   "repository": "https://github.com/jamonholmgren/terve",
