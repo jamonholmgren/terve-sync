@@ -20,9 +20,10 @@ export function withTerveSync(options: TerveSyncOptions) {
   >(store: InstanceType) {
     const connectSocket = options.mock ? noop : connect
     const joinRoom = options.mock ? mockedJoin : join
+    const socketURL = options.socketURL ? options.socketURL : "https://terve.fly.dev/socket"
 
     // ensure we're connected to the socket first
-    connectSocket(options.socketURL)
+    connectSocket(socketURL)
 
     // if no store name is provided, use the name of the model
     const storeName = options.storeName || getType(store).name
@@ -31,7 +32,10 @@ export function withTerveSync(options: TerveSyncOptions) {
     const clientId = options.clientId || randomClientId
 
     let applyingPatch = false
-    const { send } = joinRoom(`${options.apiKey}:${storeName}`, {
+    const { send } = joinRoom(`tervesync:${options.apiKey}:${storeName}`, {
+      onError(resp) {
+        console.error(resp)
+      },
       onMessage(payload) {
         // don't re-apply my own patches
         if (payload.clientId !== clientId) {
