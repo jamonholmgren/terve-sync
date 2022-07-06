@@ -1,4 +1,12 @@
-import { applyPatch, getType, IAnyComplexType, Instance, onPatch } from "mobx-state-tree"
+import {
+  applyPatch,
+  applySnapshot,
+  getSnapshot,
+  getType,
+  IAnyComplexType,
+  Instance,
+  onPatch,
+} from "mobx-state-tree"
 import { connect, join } from "./terve-socket"
 import { TerveCallbacks } from "./types"
 
@@ -31,6 +39,15 @@ export function withTerveSync(options: TerveSyncOptions) {
     // if no clientId provided, use a random one
     const clientId = options.clientId || randomClientId
 
+    // when did I join the room? oldest one is the "leader"
+    const joinedAt = Date.now()
+
+    // are we currently listening for a snapshot?
+    let requestingSnapshot = false
+
+    // the oldest one that responds to us "wins" and we apply their snapshot
+    let lastSnapshotResponderJoinedAt = joinedAt
+
     let applyingPatch = false
     const { send } = joinRoom(`tervesync:${options.apiKey}:${storeName}`, {
       onError(resp) {
@@ -38,22 +55,40 @@ export function withTerveSync(options: TerveSyncOptions) {
       },
       onMessage(payload) {
         // don't re-apply my own patches
-        if (payload.clientId !== clientId) {
-          // when applying existing patches, avoid cyclical updates
-          applyingPatch = true
+        if (payload.clientId === clientId) return
+
+        // when applying existing patches etc, avoid cyclical updates
+        applyingPatch = true
+        if (payload.patch) {
           applyPatch(store, payload.patch)
-          applyingPatch = false
+        } else if (payload.requestSnapshot) {
+          // someone wants a snapshot, so let's send ours
+          // TODO: only send it directly to them, not broadcast?
+          send({
+            clientId,
+            snapshot: getSnapshot(store),
+            joinedAt,
+          })
+        } else if (requestingSnapshot && payload.snapshot) {
+          // someone sent us a snapshot, so let's apply it if they're the leader
+          if (payload.joinedAt < lastSnapshotResponderJoinedAt) {
+            lastSnapshotResponderJoinedAt = payload.joinedAt
+            applySnapshot(store, payload.snapshot)
+            requestingSnapshot = false
+          }
         }
+        applyingPatch = false
       },
     })
 
     onPatch(store, (patch) => {
       // avoid sending patches that are already applied
-      if (!applyingPatch)
+      if (!applyingPatch) {
         send({
           clientId,
           patch,
         })
+      }
     })
 
     return {
@@ -65,6 +100,23 @@ export function withTerveSync(options: TerveSyncOptions) {
          */
         sendTerve(message: any) {
           send(message)
+        },
+
+        /**
+         * This lets you request a snapshot from all the other clients.
+         */
+        requestSnapshot() {
+          requestingSnapshot = true
+
+          send({
+            clientId,
+            requestSnapshot: true,
+          })
+
+          // if nobody responds in 3 seconds, we'll stop listening
+          setTimeout(() => {
+            requestingSnapshot = false
+          }, 3000)
         },
       },
     }
