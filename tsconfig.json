@@ -5,7 +5,8 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "lib": ["esnext"],
-    "types": ["node"]
+    "types": ["node"],
+    "declaration": true
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["./node_modules"]
