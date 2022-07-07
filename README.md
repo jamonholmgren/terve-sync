@@ -1,6 +1,6 @@
 # Terve Sync
 
-_Terve means "hello" in Finnish. You pronounce it "TARE-vuh"._
+_Terve means "hello" in Finnish. You pronounce it "TARE-veh"._
 
 This is an experimental library by Jamon Holmgren which allows for
 synchronization of MobX-State-Tree stores (and possibly others in the
